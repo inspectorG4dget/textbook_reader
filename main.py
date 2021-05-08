@@ -31,20 +31,22 @@ def main(infilepath, assetDir):
     if not os.path.exists(infilepath): return
     progress = st.progress(0)
 
-    if st.button("Preprocess file"):
-        st.write("Processing Pages in File")
-        if infilepath:
-            pdf.preProcess(infilepath, assetDir, progress)
+    with st.beta_expander("Preprocess file"):
+        if st.button("Preprocess file"):
+            st.write("Processing Pages in File")
+            if infilepath:
+                pdf.preProcess(infilepath, assetDir, progress)
 
-    pageNum = st.number_input("Which Page would you like to re-process?", min_value=1, step=1)
-    if st.button("Reprocess"):
-        pdf.reprocess(infilepath, pageNum, assetDir, progress)
+    with st.beta_expander("Reprocess page"):
+        pageNum = st.number_input("Which Page would you like to re-process?", min_value=1, step=1)
+        if st.button("Reprocess"):
+            pdf.reprocess(infilepath, pageNum, assetDir, progress)
 
-    startFrom = st.number_input("Which page would you like to start from?",
-                                min_value = 1,
-                                value = 1,
-                                step = 1
-                                )
+        startFrom = st.number_input("Which page would you like to start from?",
+                                    min_value = 1,
+                                    value = 1,
+                                    step = 1
+                                    )
     if st.button("Read aloud"):
         dirpath = os.path.join(assetDir, os.path.basename(infilepath))
         display = st.empty()
