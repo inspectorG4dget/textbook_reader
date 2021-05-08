@@ -23,47 +23,42 @@ def selectFilename(root=None):
         if os.path.isfile(os.path.join(*path)): return os.path.join(*path)
 
 
-def main(infilepath, assetDir):
-    info = st.empty()
-    info.info(infilepath)
+def main(assetDir):
 
-    if infilepath is None: return
-    if not os.path.exists(infilepath): return
     progress = st.progress(0)
 
-    with st.beta_expander("Preprocess file"):
+    with st.sidebar:
+        infilepath = selectFilename()
         if st.button("Preprocess file"):
             st.write("Processing Pages in File")
             if infilepath:
                 pdf.preProcess(infilepath, assetDir, progress)
 
-    with st.beta_expander("Reprocess page"):
         pageNum = st.number_input("Which Page would you like to re-process?", min_value=1, step=1)
         if st.button("Reprocess"):
             pdf.reprocess(infilepath, pageNum, assetDir, progress)
 
-        startFrom = st.number_input("Which page would you like to start from?",
-                                    min_value = 1,
-                                    value = 1,
-                                    step = 1
-                                    )
+    startFrom = st.number_input("Which page would you like to start from?",
+                                min_value = 1,
+                                value = 1,
+                                step = 1
+                                )
     if st.button("Read aloud"):
         dirpath = os.path.join(assetDir, os.path.basename(infilepath))
         display = st.empty()
-        displayText = collections.deque(maxlen=5)
         for page in sorted([p for p in os.listdir(dirpath)], key=lambda fpath: int(os.path.basename(fpath).rsplit('.',1)[0])):
             with open(os.path.join(dirpath, page, 'text.txt')) as infile: text = infile.read()
             sentences = nltk.sent_tokenize(text)
-            for s,sentence in enumerate(sentences, 1):
-                displayText.append(sentence)
+            for s,sentence in enumerate(sentences):
                 audioFilePath = os.path.join(dirpath, page, f"{s}.mp3")
-                dt = '\n'.join(displayText)
-                wrapped = lib.wordWrap(dt, 80)
-                display.text('\n'.join(wrapped))
+                displayText = sentences[:s] + [f"**{sentence}**"] + sentences[s+1:]
+                displayText = '\n'.join(displayText)
+                displayText = lib.wordWrap(displayText, 80)
+                display.markdown('\n'.join(displayText))
                 playsound(audioFilePath)
 
 
 if __name__ == "__main__":
-    infilepath = selectFilename()
+
     assetDir = os.path.join('DataFiles', 'assets')
-    main(infilepath, assetDir)
+    main(assetDir)

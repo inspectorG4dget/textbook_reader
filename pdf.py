@@ -26,7 +26,7 @@ def preProcess(infilepath, assetDir, progress):
         perSent = 1/len(sentences)
 
         iProgText.write(f"Processing Sentences on Page {pageNum}")
-        for snum, sentence in enumerate(sentences, 1):
+        for snum, sentence in enumerate(sentences):
             outfilepath = os.path.join(outdirpath, f"{snum}.mp3")
             if os.path.exists(outfilepath): os.remove(outfilepath)
             lib.tts(sentence, outfilepath)
