@@ -7,7 +7,7 @@ import nltk
 import streamlit as st
 
 import lib
-import pdfExtract as pdf
+import pdf as pdf
 
 from playsound import playsound
 
